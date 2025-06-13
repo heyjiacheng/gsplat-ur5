@@ -1,0 +1,58 @@
+[project]
+authors = [{name = "heyjiacheng"}]
+name = "gsplat-ur5"
+requires-python = ">= 3.11,<3.12"
+version = "0.1.0"
+
+dependencies=[
+    "warp-lang@https://pypi.nvidia.com/warp-lang/warp_lang-1.7.0.dev20250225-py3-none-manylinux2014_x86_64.whl", # update to 1.7.0 when released
+    "torch@https://download.pytorch.org/whl/cu124/torch-2.5.1%2Bcu124-cp311-cp311-linux_x86_64.whl",
+    "tyro",
+    "torchvision",
+    "tqdm", 
+    "zarr>=3.0.4,<3.1",
+    "trio",
+    "trio-util",
+    "marsoom @ git+https://github.com/jc211/marsoom.git",
+
+    "torchcodec@https://download.pytorch.org/whl/cu124/TorchCodec-0.1.1%2Bcu124-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", # TODO: Make this not a wheel
+    "realsense @ git+https://github.com/heyjiacheng/realsense.git",
+
+    "isegm @ git+https://github.com/jc211/ritm_interactive_segmentation", 
+
+    # "sam-2 @ git+https://github.com/facebookresearch/sam2.git",
+
+    "pydantic", # TODO: Remove in favor of dataclasses only
+    "drake@https://github.com/RobotLocomotion/drake/releases/download/v1.37.0/drake-1.37.0-cp311-cp311-manylinux_2_35_x86_64.whl", "opencv-python>=4.11.0.86,<5"
+]
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-options]
+no-build-isolation = ["gsplat"]
+
+[tool.pixi.system-requirements]
+cuda = "12.4"
+
+[tool.pixi.dependencies]
+ffmpeg = "*"
+open3d = "*"
+cuda = "12.4.*"
+cuda-version = "<=12.4"
+glfw = "*"
+pip = ">=25.0.1,<26"
+pyrealsense2 = ">=2.54.2,<3"
+
+[tool.pixi.pypi-dependencies]
+gsplat-ur5 = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+build_pyreduce = "pip install git+https://github.com/jc211/pysegreduce.git"
+build_gsplat = "pip install git+https://github.com/nerfstudio-project/gsplat.git"
+build = {depends-on=["build_pyreduce", "build_gsplat"]}
+demo = "python examples/example_embodied_pusht_offline.py"
+
+[tool.pixi.activation]
+env = {LD_LIBRARY_PATH = "$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"}

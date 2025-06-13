@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<robot name="pusher">
+  <link name="base">
+  </link>
+
+  <link name="x_link">
+  </link>
+
+  <link name="y_link">
+    <collision>
+      <origin xyz="0 0 -0.08" />
+      <geometry>
+        <!-- <mesh filename="meshes/franka/pusher.stl"/> -->
+        <cylinder radius="0.0125" length="0.125"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="x_joint" type="prismatic">
+   <axis xyz="1 0 0" />
+   <parent link="base" />
+   <child link="x_link" />
+  </joint>
+
+  <joint name="y_joint" type="prismatic">
+   <axis xyz="0 1 0" />
+   <parent link="x_link" />
+   <child link="y_link" />
+  </joint>
+
+</robot>
