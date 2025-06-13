@@ -369,7 +369,7 @@ class SimpleBodyBuilder:
                 height=gt_data.height,
                 camera_model="pinhole",
                 render_mode="RGB+D",
-                backgrounds=None,
+                backgrounds=background.reshape(1, 3).repeat(num_images, 1),
             )
 
             loss = torch.nn.functional.mse_loss(render_colors[..., :3], gt_data.images)
@@ -467,7 +467,7 @@ class SimpleBodyBuilder:
                 height=gt_data.height,
                 camera_model="pinhole",
                 render_mode="RGB+D",
-                backgrounds=None,
+                backgrounds=background.reshape(1, 3).repeat(num_images, 1),
             )
 
             loss = torch.nn.functional.mse_loss(render_colors[..., :3], gt_data.images)

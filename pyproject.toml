@@ -50,7 +50,7 @@ gsplat-ur5 = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 build_pyreduce = "pip install git+https://github.com/jc211/pysegreduce.git"
-build_gsplat = "pip install git+https://github.com/nerfstudio-project/gsplat.git"
+build_gsplat = "pip install git+https://github.com/nerfstudio-project/gsplat.git@v1.5.1"
 build = {depends-on=["build_pyreduce", "build_gsplat"]}
 demo = "python examples/example_embodied_pusht_offline.py"
 

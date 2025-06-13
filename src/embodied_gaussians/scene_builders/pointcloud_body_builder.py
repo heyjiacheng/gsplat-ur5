@@ -123,7 +123,7 @@ class PointCloudBodyBuilder:
         #         ]
         #     )
 
-        datapoints = [datapoints[0]]  # , datapoints[1]]#, datapoints[2]]
+        datapoints = [datapoints[0], datapoints[1], datapoints[2]]
         gt_data = PointCloudBodyBuilder._get_rasterization_groundtruth(
             datapoints, max_depth=max_depth
         )

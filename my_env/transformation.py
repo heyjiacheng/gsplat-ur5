@@ -11,6 +11,8 @@ import math
 import json
 import numpy as np
 from datetime import datetime
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 OUTPUT_JSON = "cameras_tf.json"
 
@@ -51,7 +53,7 @@ OPENCV_CAM_TO_BLENDER_CAM_FRAME_TRANSFORM = np.array([
 # ---------------- 处理三个 eye-on-base 相机 ---------------- #
 # 直接把 easy_handeye/yaml 的四元数和平移抄进来
 CAMERA_PARAMS = {
-    "130322272869": {   # Camera 1
+    "218622277783": {   # Camera 1  
         "qw": 0.2753382259432706,
         "qx": -0.9507914491110444,
         "qy": 0.10163352731715625,
@@ -60,7 +62,7 @@ CAMERA_PARAMS = {
         "y": -0.2818959803878928,
         "z": 0.4054716586599699,
     },
-    "218622277783": {   # Camera 2
+    "130322272869": {   # Camera 2
         "qw": 0.03720964521903238,
         "qx": -0.11719798735462308,
         "qy": 0.9587194572328736, 
@@ -82,14 +84,98 @@ CAMERA_PARAMS = {
 
 def cameras_to_json_block():
     block = {}
-    for camera_name, p in CAMERA_PARAMS.items():
+    # Only apply transformation to camera1 and camera2
+    cameras_to_transform = ["130322272869", "218622277783", "819612070593"]  # Camera 1 and Camera 2
+    
+    # 创建可视化
+    fig = plt.figure(figsize=(12, 10))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # 相机颜色和名称
+    camera_colors = ['red', 'green', 'blue']
+    camera_names = ['Camera 1 (218622277783)', 'Camera 2 (130322272869)', 'Camera 3 (819612070593)']
+    
+    for idx, (camera_name, p) in enumerate(CAMERA_PARAMS.items()):
         H = homogeneous_from_quat(**p)
-        # Assuming H is World->OpenCVCamera, convert to World->BlenderCamera for script input
-        H = H @ OPENCV_CAM_TO_BLENDER_CAM_FRAME_TRANSFORM
-        # Inverse the final transformation matrix
-        H = np.linalg.inv(H)
+        
+        # Only apply OPENCV_CAM_TO_BLENDER_CAM_FRAME_TRANSFORM to specified cameras
+        if camera_name in cameras_to_transform:
+            # Assuming H is World->OpenCVCamera, convert to World->BlenderCamera for script input
+            H = H @ OPENCV_CAM_TO_BLENDER_CAM_FRAME_TRANSFORM
+            
+        
+        # 可视化部分
+        pos = H[:3, 3]  # 相机位置
+        
+        # 相机坐标系的三个轴向量（旋转矩阵的列）
+        x_axis = H[:3, 0] * 0.1  # X轴 (红色)
+        y_axis = H[:3, 1] * 0.1  # Y轴 (绿色)
+        z_axis = H[:3, 2] * 0.1  # Z轴 (蓝色)
+        
+        color = camera_colors[idx]
+        
+        # 绘制相机位置，标记是否应用了变换
+        transform_status = " (Transformed)" if camera_name in cameras_to_transform else " (Original)"
+        ax.scatter(pos[0], pos[1], pos[2], 
+                  c=color, s=100, alpha=0.8, 
+                  label=camera_names[idx] + transform_status)
+        
+        # 绘制坐标轴
+        # X轴 (红色)
+        ax.quiver(pos[0], pos[1], pos[2],
+                 x_axis[0], x_axis[1], x_axis[2],
+                 color='red', alpha=0.7, arrow_length_ratio=0.1)
+        
+        # Y轴 (绿色)
+        ax.quiver(pos[0], pos[1], pos[2],
+                 y_axis[0], y_axis[1], y_axis[2],
+                 color='green', alpha=0.7, arrow_length_ratio=0.1)
+        
+        # Z轴 (蓝色)
+        ax.quiver(pos[0], pos[1], pos[2],
+                 z_axis[0], z_axis[1], z_axis[2],
+                 color='blue', alpha=0.7, arrow_length_ratio=0.1)
+        
+        # 添加相机标签
+        ax.text(pos[0], pos[1], pos[2] + 0.05, 
+               f'Cam{idx+1}', fontsize=10, color=color)
+        
+        # H = np.linalg.inv(H)
         block[camera_name] = {"X_WT": format_matrix(H)}
+    
+    # 绘制世界坐标系原点
+    ax.scatter(0, 0, 0, c='black', s=150, alpha=1.0, marker='o', label='World Origin')
+    
+    # 绘制世界坐标系轴
+    axis_length = 0.15
+    ax.quiver(0, 0, 0, axis_length, 0, 0, color='red', alpha=0.9, arrow_length_ratio=0.1, linewidth=3)
+    ax.quiver(0, 0, 0, 0, axis_length, 0, color='green', alpha=0.9, arrow_length_ratio=0.1, linewidth=3)
+    ax.quiver(0, 0, 0, 0, 0, axis_length, color='blue', alpha=0.9, arrow_length_ratio=0.1, linewidth=3)
+    
+    # 设置坐标轴标签和标题
+    ax.set_xlabel('X (m)')
+    ax.set_ylabel('Y (m)')
+    ax.set_zlabel('Z (m)')
+    ax.set_title('Camera Coordinate Systems Visualization\nRed=X-axis, Green=Y-axis, Blue=Z-axis')
+    
+    # 设置相等的轴比例
+    max_range = 0.6
+    ax.set_xlim([-max_range, max_range])
+    ax.set_ylim([-max_range, max_range])
+    ax.set_zlim([0, max_range])
+    
+    # 添加图例
+    ax.legend()
+    
+    # 添加网格
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+    
     return block
+
+
 
 # ---------------- 主入口 ---------------- #
 if __name__ == "__main__":
@@ -99,4 +185,4 @@ if __name__ == "__main__":
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=4, ensure_ascii=False)
 
-    print(f"[{datetime.now().isoformat(timespec='seconds')}] 已生成 {OUTPUT_JSON}")
+    print(f"[{datetime.now().isoformat(timespec='seconds')}] 已生成 {OUTPUT_JSON} (含可视化)")

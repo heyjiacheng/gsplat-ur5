@@ -398,7 +398,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/1e/8b/208170a2bd1c7899b01f57ac4bd1d67436735056f77b7941cb133621c4dc/pyrealsense2-2.55.1.6486-cp311-cp311-manylinux1_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/75/e4/2c27590dfc9992f73aabbeb9241ae20220bd9452df27483b6e56d3975cc5/PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: git+https://github.com/heyjiacheng/realsense.git#dcb755ff44a8b99089a23c478cb6483a0d91e9ac
+      - pypi: git+https://github.com/heyjiacheng/realsense.git#26cdd939819ec0ee18255c2c9058d6a60559f41c
       - pypi: https://files.pythonhosted.org/packages/19/71/39c7c0d87f8d4e6c020a393182060eaefeeae6c01dab6a84ec346f2567df/rich-13.9.4-py3-none-any.whl
       - pypi: git+https://github.com/jc211/ritm_interactive_segmentation#def5ff1ec309389d552f1a036000fc6160dd398f
       - pypi: https://files.pythonhosted.org/packages/32/ea/564bacc26b676c06a00266a3f25fdfe91a9d9a2532ccea7ce6dd394541bc/scipy-1.15.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
@@ -2035,7 +2035,7 @@ packages:
 - pypi: .
   name: gsplat-ur5
   version: 0.1.0
-  sha256: 8f083ee593065e61769bd567985693510ad21cf35e2d2b3d37c154f062334173
+  sha256: 10400abb01f21f0a30439ed5c25ff6a4498116d9df9649b4c05dc2885e686233
   requires_dist:
   - warp-lang @ https://pypi.nvidia.com/warp-lang/warp_lang-1.7.0.dev20250225-py3-none-manylinux2014_x86_64.whl
   - torch @ https://download.pytorch.org/whl/cu124/torch-2.5.1%2Bcu124-cp311-cp311-linux_x86_64.whl
@@ -4670,7 +4670,7 @@ packages:
   purls: []
   size: 282480
   timestamp: 1740379431762
-- pypi: git+https://github.com/heyjiacheng/realsense.git#dcb755ff44a8b99089a23c478cb6483a0d91e9ac
+- pypi: git+https://github.com/heyjiacheng/realsense.git#26cdd939819ec0ee18255c2c9058d6a60559f41c
   name: realsense
   version: 1.0.2
   requires_dist:
