@@ -91,10 +91,20 @@ class SimpleBodyBuilder:
         )
 
         # ================ Step 4: Prune points not in masks =================
-        mask = SimpleBodyBuilder._prune_points_not_in_masks(sphere_means, datapoints)
-        sphere_means = sphere_means[mask]
+        keep_mask, removed_mask = SimpleBodyBuilder._prune_points_not_in_masks(
+            sphere_means, datapoints, debug=visualize
+        )
+
+        # --- optional debug visualization ----------------------------------
+        if visualize:
+            SimpleBodyBuilder._debug_visualize_mask_pruning(
+                sphere_means, datapoints, keep_mask
+            )
+        # -------------------------------------------------------------------
+
+        sphere_means = sphere_means[keep_mask]
         if sphere_means.shape[0] == 0:
-            logger.warning("No points left after pruning")
+            logger.warning("No points left after pruning (mask stage)")
             return None
 
         # ================ Step 5: Prune points below ground =================
@@ -284,11 +294,13 @@ class SimpleBodyBuilder:
 
     @staticmethod
     def _prune_points_not_in_masks(
-        points: np.ndarray, datapoints: list[MaskedPosedImageAndDepth]
+        points: np.ndarray,
+        datapoints: list[MaskedPosedImageAndDepth],
+        debug: bool = False,
     ):
         assert points.shape[1] == 3
 
-        final_mask = np.zeros((points.shape[0],), dtype=bool)
+        final_mask = np.zeros((points.shape[0],), dtype=bool)  # True -> removed by at least one cam
 
         for datapoint in datapoints:
             if datapoint.mask is None:
@@ -307,7 +319,48 @@ class SimpleBodyBuilder:
             remove_mask[inds_to_remove] = True
             final_mask |= remove_mask
 
-        return ~final_mask
+        return ~final_mask, final_mask  # keep_mask, removed_mask
+
+    @staticmethod
+    def _debug_visualize_mask_pruning(
+        points: np.ndarray,
+        datapoints: list[MaskedPosedImageAndDepth],
+        keep_mask: np.ndarray,
+    ) -> None:
+        """Visualize each camera image with projected points.
+
+        Kept points : green;  removed points : red.
+        """
+        import cv2
+
+        for cam_idx, dp in enumerate(datapoints):
+            if dp.mask is None or dp.image is None:
+                continue
+
+            img = dp.image.copy()
+            h, w = img.shape[:2]
+            uv, valid = SimpleBodyBuilder._project_points(
+                points, dp.K, dp.X_WC, w, h
+            )
+            inds = np.where(valid)[0]
+            uv = uv[valid]
+
+            for (u, v), idx in zip(uv, inds):
+                color = (0, 255, 0) if keep_mask[idx] else (0, 0, 255)
+                cv2.circle(img, (int(u), int(v)), 2, color, -1)
+
+            # --- also visualize on the segmentation mask -------------------
+            if dp.mask is not None:
+                mask_vis = cv2.cvtColor((dp.mask * 127).astype(np.uint8), cv2.COLOR_GRAY2BGR)
+                for (u, v), idx in zip(uv, inds):
+                    color = (0, 255, 0) if keep_mask[idx] else (0, 0, 255)
+                    cv2.circle(mask_vis, (int(u), int(v)), 2, color, -1)
+                cv2.imshow(f"mask_debug_cam_{cam_idx}_mask", mask_vis)
+
+            cv2.imshow(f"mask_debug_cam_{cam_idx}_rgb", img)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     @staticmethod
     def _prune_points_below_ground(xyz: np.ndarray, ground: Ground) -> np.ndarray:

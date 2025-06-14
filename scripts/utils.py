@@ -22,6 +22,7 @@ def get_datapoints_from_live_cameras(
 
     datapoints = []
     serial_numbers = list(extrinsics.keys())
+    print("serial_numbers", serial_numbers)
     with MultiRealsense(serial_numbers=serial_numbers, enable_depth=True) as realsenses:
         # realsenses.set_exposure(177, 70)
         # realsenses.set_white_balance(4600)

@@ -38,6 +38,10 @@ python scripts/real_time_tracking.py objects/tblock.json --extrinsics my_env/cam
 ## Modification of Original Code
 original project: [Embodied Gaussian](https://github.com/bdaiinstitute/embodied_gaussians)
 
-1. set all background to None in simple_body_builder.py.
+1. add gravity in tracking.
 
-2. deleted camera exposure from get_datapoints_from_live_cameras
+2. deleted camera exposure from get_datapoints_from_live_cameras.
+
+## Need to do
+
+1. calibrate camera 1
