@@ -105,11 +105,13 @@ class RealTimeTracker:
 
         ground_data = read_ground(self.params.ground)
         ground = Ground(plane=ground_data)
-        body = RealTimeTracker.get_body("tblock")
+        body_1 = RealTimeTracker.get_body("controller")
+        body_2 = RealTimeTracker.get_body("tape")
         ground_body = RealTimeTracker.get_body("ground_body")
         
         builder = EmbodiedGaussiansBuilder()
-        body_id = builder.add_rigid_body(body, add_gaussians=True)
+        body_id_1 = builder.add_rigid_body(body_1, add_gaussians=True)
+        body_id_2 = builder.add_rigid_body(body_2, add_gaussians=True)
         builder.add_visual_body(ground_body)
         
         final_builder = EmbodiedGaussiansBuilder()
@@ -122,8 +124,10 @@ class RealTimeTracker:
         # Disable gravity for the tracking object (we want visual forces to control it)
         # if env.num_envs() > 0:
         #     gravity_factors = wp.to_torch(env.sim.model.gravity_factor).reshape(env.num_envs(), -1)
-        #     if gravity_factors.shape[1] > body_id:
-        #         gravity_factors[:, body_id] = 0.0
+        #     if gravity_factors.shape[1] > body_id_1:
+        #         gravity_factors[:, body_id_1] = 0.0
+        #     if gravity_factors.shape[1] > body_id_2:
+        #         gravity_factors[:, body_id_2] = 0.0
         
         env.stash_state()
         return env
