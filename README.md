@@ -20,7 +20,7 @@ python scripts/find_ground.py temp/ground_plane.json --extrinsics my_env/cameras
 ```
 gaussian splats the ground plane (no item on the ground plane)
 ```bash
-python scripts/build_body_from_pointcloud.py temp/ground_body.json --extrinsics my_env/cameras_tf.json --points temp/ground_plane.npy --visualize
+python scripts/build_body_from_pointcloud.py objects/ground_body.json --extrinsics my_env/cameras_tf.json --points temp/ground_plane.npy --visualize
 ```
 gausssian splats the item
 ```bash
@@ -32,7 +32,7 @@ python scripts/visualize_object.py objects/tblock.json
 ```
 real time tracking
 ```bash
-python scripts/real_time_tracking.py objects/tblock.json --extrinsics my_env/cameras_tf.json --ground temp/ground_plane.json --visualize
+python scripts/real_time_tracking.py objects --extrinsics my_env/cameras_tf.json --ground temp/ground_plane.json --visualize
 ```
 
 ## Modification of Original Code

@@ -76,6 +76,9 @@ class SimpleBodyBuilder:
         pc = SimpleBodyBuilder._merge_into_pointcloud(datapoints, settings.max_depth)
         if pc is None:
             return None
+        
+        if visualize:
+            o3d.visualization.draw_geometries([pc])
 
         # ================ Step 2: Get the bounding box of the pointcloud =================
         obb = SimpleBodyBuilder._filter_and_get_bounding_box(

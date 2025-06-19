@@ -106,12 +106,12 @@ class RealTimeTracker:
         ground_data = read_ground(self.params.ground)
         ground = Ground(plane=ground_data)
         body_1 = RealTimeTracker.get_body("controller")
-        body_2 = RealTimeTracker.get_body("tape")
+        # body_2 = RealTimeTracker.get_body("tape")
         ground_body = RealTimeTracker.get_body("ground_body")
         
         builder = EmbodiedGaussiansBuilder()
         body_id_1 = builder.add_rigid_body(body_1, add_gaussians=True)
-        body_id_2 = builder.add_rigid_body(body_2, add_gaussians=True)
+        # body_id_2 = builder.add_rigid_body(body_2, add_gaussians=True)
         builder.add_visual_body(ground_body)
         
         final_builder = EmbodiedGaussiansBuilder()
