@@ -10,6 +10,9 @@ from embodied_gaussians.scene_builders.domain import (
 from embodied_gaussians import SimpleBodyBuilder, SimpleBodyBuilderSettings
 from embodied_gaussians.utils.utils import read_extrinsics, read_ground
 from utils import get_datapoints_from_live_cameras
+from embodied_gaussians.scene_builders.simple_body_builder import (
+    SmallObjectBuilderSettings  # 新增小物体设置
+)
 
 
 @dataclass
@@ -45,6 +48,10 @@ class Params:
     builder: SimpleBodyBuilderSettings = field(
         default_factory=SimpleBodyBuilderSettings
     )
+    small_object: bool = False
+    """
+    Use optimized settings for small objects
+    """
 
 
 def main(params: Params):
@@ -59,7 +66,11 @@ def main(params: Params):
 
     name = params.save_path.stem
 
-    settings = params.builder
+    if params.small_object:
+        print("Using optimized settings for small objects...")
+        settings = SmallObjectBuilderSettings()
+    else:
+        settings = params.builder
 
     if params.ground is not None:
         ground_data = read_ground(params.ground)

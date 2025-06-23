@@ -58,6 +58,20 @@ class SimpleBodyBuilderSettings:
     cohesion_distance: float = 0.002
 
 
+@dataclass 
+class SmallObjectBuilderSettings(SimpleBodyBuilderSettings):
+    """
+    Optimized settings for small objects like tools (screwdrivers, pliers, drills)
+    """
+    particle_radius: float = 0.002  # Smaller particles for fine details
+    training_iterations: int = 2000  # More iterations for better convergence
+    voxel_size: float = 0.002  # Finer voxel resolution
+    outlier_radius: float = 0.004  # Tighter outlier filtering
+    outlier_nb_points: int = 10  # Fewer neighbors required
+    cohesion_distance: float = 0.0008  # Tighter cohesion for small objects
+    opacity_threshold: float = 0.3  # Lower threshold to retain more detail
+
+
 class SimpleBodyBuilder:
 
     @staticmethod

@@ -26,6 +26,10 @@ gausssian splats the item
 ```bash
 python scripts/build_simple_body.py objects/tblock.json     --extrinsics my_env/cameras_tf.json     --ground scripts/example_ground_plane.json     --visualize
 ```
+使用小物体优化参数（适合螺丝刀、钳子等）
+```bash
+python scripts/build_simple_body.py objects/screwdriver.json --extrinsics my_env/cameras_tf.json --small-object --visualize
+```
 visulization
 ```bash
 python scripts/visualize_object.py objects/tblock.json
